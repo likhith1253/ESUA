@@ -56,8 +56,3 @@ Explore the full documentation in the `docs/` directory:
 - **Dynamic Risk Rules:** Allowing users to define custom safety heuristics via a configuration file.
 - **Audio Alerts:** Integrating text-to-speech (TTS) to physically warn users when they are not looking at the screen.
 - **Edge Device Optimization:** Porting the models to run natively on edge TPUs, Raspberry Pi, or Jetson Nano.
-
-## Contact
-**Author:** [Your Name / Engineering Team]  
-**LinkedIn:** [Your LinkedIn Profile]  
-**Portfolio:** [Your Resume/Portfolio Link]  
