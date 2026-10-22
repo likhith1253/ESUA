@@ -4,7 +4,7 @@ Follow this guide to get ESUA running on your local machine. Because this projec
 
 ## Prerequisites
 
-- **Python:** `3.8`, `3.9`, or `3.10` recommended
+- **Python:** 3.9 or newer (tested here with 3.12)
 - **Git:** For cloning the repository
 - **Operational Webcam:** Required for real-time analysis modules
 
@@ -12,7 +12,7 @@ Follow this guide to get ESUA running on your local machine. Because this projec
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/ESUA.git
+git clone https://github.com/likhith1253/ESUA.git
 cd ESUA
 ```
 
@@ -36,7 +36,7 @@ pip install -r requirements.txt
 This automatically handles fetching the standard Ultralytics package (which includes PyTorch), OpenCV-python for camera streaming, and requests.
 
 ### 4. Verify Model Download
-Ensure the `yolov8n.pt` weights file is located in the root codebase directory (`d:\ESUA\`). If it is not present, the `ultralytics` package should automatically attempt to pull the weights upon initial execution.
+Ensure the `yolov8n.pt` weights file is located in the repository root (it is git-ignored; `ultralytics` downloads it automatically on first use). If it is not present, the `ultralytics` package should automatically attempt to pull the weights upon initial execution.
 
 ### 5. Verify Hardware Permissions
 Depending on your OS (especially Windows 11 and macOS), Python will need explicit permission to access the local camera hardware. Ensure these permissions are granted in your system's privacy settings.

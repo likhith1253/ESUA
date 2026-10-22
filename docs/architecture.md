@@ -35,9 +35,9 @@ The pipeline processes data stage-by-stage:
   - **Relative Positioning:** Sorts objects geometrically into descriptive categories (e.g., *left of*, *near*, *far from*).
 
 ### 5. Risk Heuristics Evaluation & Explanation Generation
-- **Categorization Dictionary:** Objects evaluated by the temporal aggregation layer are expanded via `object_categories` (such that a `bottle` is identified logically as a `liquid container`).
-- **Rule Matching:** The system evaluates pairs of proximal objects against `risk_rules.py` (e.g., logic verifying whether a `liquid` object is `<400px` from an `electronic` object).
-- **Template Generation:** Utilizes pre-formatted linguistic mappings in `explanation_templates.py` to create dynamic natural language warnings describing the specific context of the threat.
+- **Categorization Dictionary:** Objects evaluated by the temporal aggregation layer are expanded via `esua_core/categories.py` (such that a `bottle` is identified logically as a `liquid container`).
+- **Rule Matching:** The system evaluates pairs of proximal objects against `esua_core/risk_rules.py` (e.g., logic verifying whether a `liquid` object is `<400px` from an `electronic` object).
+- **Template Generation:** Utilizes pre-formatted linguistic mappings in `esua_core/explanations.py` to create dynamic natural language warnings describing the specific context of the threat.
 
 ## Deployment Target Logic
 Because the YOLOv8 Nano model weights are baked into the `d:\ESUA` root path, predictions default to the CPU but are optimized for low-latency feedback. Rendering latency is artificially mitigated by skipping inference on intermittent frames while maintaining bounding box interpolation over the continuous video feed display.

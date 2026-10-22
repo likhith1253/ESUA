@@ -45,3 +45,18 @@ def check_risks(obj_a, obj_b, distance, relation_type):
              risks.append(f"Damage Risk detected: {obj_a['name']} (liquid) is near {obj_b['name']}")
              
     return risks
+
+
+def classify_risk(cats_a, cats_b, relation_type):
+    """Map two category lists to a template key, or None.
+
+    'spill_risk' when a liquid is near electronics, otherwise 'damage_risk' when a liquid is near
+    flammable items (paper, books). Used by the explanation phases.
+    """
+    if relation_type != "near":
+        return None
+    if ("liquid" in cats_a and "electronics" in cats_b) or ("liquid" in cats_b and "electronics" in cats_a):
+        return "spill_risk"
+    if ("liquid" in cats_a and "flammable" in cats_b) or ("liquid" in cats_b and "flammable" in cats_a):
+        return "damage_risk"
+    return None

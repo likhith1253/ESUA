@@ -34,4 +34,4 @@ Objects previously identified as plain nouns (e.g. `bottle`) are passed through 
 If two categorically opposing items (`liquid container` + `electronic system`) share a `near` status tag, risk rules evaluate to `True`.
 
 **Output:**  
-A final string is fetched from `explanation_templates.py`, stitched together dynamically using variable injection (`{obj_a} is placed near {obj_b}...`), and subsequently overlayed via `cv2.putText()` directly onto the final output frame alongside bounded boxes.
+A final string is fetched from `esua_core/explanations.py`, stitched together dynamically using variable injection (`{obj_a} is placed near {obj_b}...`), and subsequently overlayed via `cv2.putText()` directly onto the final output frame alongside bounded boxes.

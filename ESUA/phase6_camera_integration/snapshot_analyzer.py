@@ -7,40 +7,23 @@ import collections
 import numpy as np
 from ultralytics import YOLO
 
-# Add current directory to path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Import helper modules
-try:
-    import object_categories
-    import risk_rules
-    import explanation_templates
-except ImportError:
-    # Fallback to importing from previous phases
-    try:
-        sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../phase4_explanation_generation'))
-        import object_categories
-        import risk_rules
-        import explanation_templates
-    except ImportError:
-        print("Error: Could not import ESUA helper modules.")
-        sys.exit(1)
+# Shared logic lives in the esua_core package at the repository root
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+from esua_core import aggregation, spatial
+from esua_core import categories as object_categories
+from esua_core import risk_rules
+from esua_core import explanations as explanation_templates
 
 # --- CONFIGURATION ---
 BUFFER_SIZE = 5
 CONFIRMATION_THRESHOLD_FRAMES = 2  # Object must be seen in at least this many frames
 GROUPING_DISTANCE_THRESHOLD = 50   # Pixels
 
-# Class-Aware Thresholds
+
 def get_confidence_threshold(class_name):
-    # Lower threshold for small/hard objects
-    if class_name in ['cup', 'bottle', 'wine glass', 'cell phone', 'mouse', 'remote']:
-        return 0.10
-    # Stricter for people to avoid ghosts
-    elif class_name == 'person':
-        return 0.30
-    # Standard for others
-    return 0.25
+    """Class-aware confidence threshold (see esua_core.aggregation)."""
+    return aggregation.confidence_threshold(class_name)
+
 
 def main():
     print("Initializing Robust ESUA Camera System...")
@@ -139,27 +122,8 @@ def main():
     # Group detections that are spatially close and same class
     print(f"\nAggregating {len(all_detections)} candidates across temporal buffer...")
     
-    candidate_groups = [] # List of lists of detection dicts
-    
-    for det in all_detections:
-        matched = False
-        for group in candidate_groups:
-            # Check representative (first item in group)
-            rep = group[0]
-            
-            if rep['class'] == det['class']:
-                # Check spatial distance
-                dist = math.sqrt((rep['center'][0] - det['center'][0])**2 + 
-                                 (rep['center'][1] - det['center'][1])**2)
-                
-                if dist < GROUPING_DISTANCE_THRESHOLD:
-                    group.append(det)
-                    matched = True
-                    break
-        
-        if not matched:
-            candidate_groups.append([det])
-            
+    candidate_groups = aggregation.group_detections(all_detections, GROUPING_DISTANCE_THRESHOLD)
+
     # Filter Groups by temporal consistency
     confirmed_objects = []
     
@@ -239,7 +203,7 @@ def main():
 
     # Spatial Logic (Phase 2)
     print("\n[Phase 2] Spatial Relationships:")
-    NEAR_THRESHOLD = 400
+    NEAR_THRESHOLD = spatial.NEAR_THRESHOLD
     relationships = []
     
     for i in range(len(processed_objects)):
@@ -247,10 +211,8 @@ def main():
             obj_a = processed_objects[i]
             obj_b = processed_objects[j]
             
-            dist = math.sqrt((obj_a['center'][0] - obj_b['center'][0])**2 + 
-                             (obj_a['center'][1] - obj_b['center'][1])**2)
-            
-            proximity = "near" if dist < NEAR_THRESHOLD else "far from"
+            dist = spatial.distance(obj_a['center'], obj_b['center'])
+            proximity = spatial.proximity(dist, NEAR_THRESHOLD)
             
             print(f"- {obj_a['display_name']} is {proximity} {obj_b['display_name']} ({dist:.1f}px)")
             
@@ -270,17 +232,9 @@ def main():
         obj_b = rel['obj_b']
         proximity = rel['proximity']
         
-        risk_type = None
         cats_a = obj_a['categories']
         cats_b = obj_b['categories']
-        
-        if proximity == "near":
-            if ('liquid' in cats_a and 'electronics' in cats_b) or \
-               ('liquid' in cats_b and 'electronics' in cats_a):
-                risk_type = 'spill_risk'
-            elif ('liquid' in cats_a and 'flammable' in cats_b) or \
-                 ('liquid' in cats_b and 'flammable' in cats_a):
-                risk_type = 'damage_risk'
+        risk_type = risk_rules.classify_risk(cats_a, cats_b, proximity)
         
         if risk_type:
             risks_found = True

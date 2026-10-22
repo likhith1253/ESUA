@@ -2,9 +2,14 @@ import cv2
 import time
 import math
 from ultralytics import YOLO
-import object_categories
-import risk_rules
-import explanation_templates
+import os
+import sys
+
+# Shared logic lives in the esua_core package at the repository root
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+from esua_core import categories as object_categories
+from esua_core import risk_rules
+from esua_core import explanations as explanation_templates
 
 def main():
     print("Initializing ESUA Camera Runner...")

@@ -33,7 +33,7 @@ Translates raw nouns (like `cup` and `laptop`) into semantic traits (like `liqui
 
 ![Feature Example](images/feature_example.png)
 
-- **Inputs Supported:** Proximity relationships overlapping with the `object_categories.py` dictionary mapping.
+- **Inputs Supported:** Proximity relationships overlapping with the `esua_core/categories.py` dictionary mapping.
 - **Outputs Produced:** High-priority visual and text alerts (e.g., `spill_risk`, `damage_risk`).
 - **Validation Logic:** Logical boolean statements (`if liquid in categories and flammable in categories -> alert`).
 - **Error Handling:** Defaults to harmless descriptions if an object map is missing or undefined in the rule bank.

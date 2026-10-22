@@ -1,8 +1,13 @@
 import cv2
 import math
 from ultralytics import YOLO
-import object_categories
-import risk_rules
+import os
+import sys
+
+# Shared logic lives in the esua_core package at the repository root
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+from esua_core import categories as object_categories
+from esua_core import risk_rules
 
 # 1. Load the YOLOv8n model
 print("Loading model...")
